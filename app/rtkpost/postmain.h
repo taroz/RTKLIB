@@ -193,12 +193,12 @@ public:
 	int OutCntResetAmb,FixCntHoldAmb,LockCntFixAmb,RovPosType,RefPosType;
 	int SatEphem,NavSys;
 	int RovAntPcv,RefAntPcv,AmbRes,GloAmbRes,BdsAmbRes;
-	int OutputHead,OutputOpt,OutputSingle,OutputDatum;
+	int OutputHead,OutputOpt,OutputSingle,OutputVel,OutputAll,OutputDatum;
 	int OutputHeight,OutputGeoid,DebugTrace,DebugStatus,BaseLineConst;
 	int SolFormat,TimeFormat,LatLonFormat,IntpRefObs,NetRSCorr,SatClkCorr;
 	int SbasCorr,SbasCorr1,SbasCorr2,SbasCorr3,SbasCorr4,TimeDecimal;
 	int SolStatic,SbasSat,MapFunc;
-	int PosOpt[6];
+	int PosOpt[7];
 	double ElMask,MaxAgeDiff,RejectThres,RejectGdop;
 	double MeasErrR1,MeasErrR2,MeasErr2,MeasErr3,MeasErr4,MeasErr5;
 	double SatClkStab,RovAntE,RovAntN,RovAntU,RefAntE,RefAntN,RefAntU;

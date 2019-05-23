@@ -94,11 +94,10 @@ object OptDialog: TOptDialog
     Top = 0
     Width = 411
     Height = 263
-    ActivePage = TabSheet1
+    ActivePage = TabSheet3
     TabOrder = 4
     object TabSheet1: TTabSheet
       Caption = 'Setting&1'
-      ExplicitHeight = 234
       object Label3: TLabel
         Left = 24
         Top = 73
@@ -382,32 +381,32 @@ object OptDialog: TOptDialog
           '70')
       end
       object PosOpt1: TCheckBox
-        Left = 24
-        Top = 162
+        Left = 16
+        Top = 163
         Width = 62
         Height = 17
         Caption = 'Sat PCV'
         TabOrder = 10
       end
       object PosOpt3: TCheckBox
-        Left = 144
-        Top = 162
+        Left = 133
+        Top = 163
         Width = 85
         Height = 17
         Caption = 'PhWU'
         TabOrder = 12
       end
       object PosOpt2: TCheckBox
-        Left = 83
-        Top = 162
+        Left = 74
+        Top = 163
         Width = 57
         Height = 17
         Caption = 'Rec PCV'
         TabOrder = 11
       end
       object PosOpt4: TCheckBox
-        Left = 194
-        Top = 162
+        Left = 179
+        Top = 163
         Width = 85
         Height = 17
         Caption = 'Rej Ecl'
@@ -423,16 +422,16 @@ object OptDialog: TOptDialog
         OnClick = BtnMaskClick
       end
       object PosOpt5: TCheckBox
-        Left = 246
-        Top = 162
+        Left = 230
+        Top = 163
         Width = 72
         Height = 17
         Caption = 'RAIM FDE'
         TabOrder = 14
       end
       object PosOpt6: TCheckBox
-        Left = 314
-        Top = 162
+        Left = 301
+        Top = 163
         Width = 72
         Height = 17
         Caption = 'DBCorr'
@@ -447,11 +446,18 @@ object OptDialog: TOptDialog
         TabOrder = 23
         OnClick = NavSys6Click
       end
+      object PosOpt7: TCheckBox
+        Left = 355
+        Top = 163
+        Width = 72
+        Height = 17
+        Caption = 'DISB'
+        TabOrder = 24
+      end
     end
     object TabSheet2: TTabSheet
       Caption = 'Setting&2'
       ImageIndex = 1
-      ExplicitHeight = 234
       object Label25: TLabel
         Left = 24
         Top = 7
@@ -718,7 +724,6 @@ object OptDialog: TOptDialog
     object TabSheet3: TTabSheet
       Caption = 'O&utput'
       ImageIndex = 2
-      ExplicitHeight = 234
       object LabelSolFormat: TLabel
         Left = 24
         Top = 9
@@ -743,9 +748,9 @@ object OptDialog: TOptDialog
       object LabelFieldSep: TLabel
         Left = 24
         Top = 97
-        Width = 215
+        Width = 214
         Height = 13
-        Caption = 'Output Single if Sol Outage / Max Sol Std (m)'
+        Caption = 'Output Single /  All Epochs  / Max Sol Std (m)'
       end
       object Label2: TLabel
         Left = 24
@@ -785,10 +790,10 @@ object OptDialog: TOptDialog
       end
       object Label31: TLabel
         Left = 24
-        Top = 163
-        Width = 114
+        Top = 165
+        Width = 203
         Height = 13
-        Caption = 'Solution for Static Mode'
+        Caption = 'Soltion for Static / Out Vel / Out All Epochs'
       end
       object SolFormat: TComboBox
         Left = 248
@@ -969,7 +974,7 @@ object OptDialog: TOptDialog
       object SolStatic: TComboBox
         Left = 248
         Top = 160
-        Width = 152
+        Width = 50
         Height = 21
         Style = csDropDownList
         ItemIndex = 0
@@ -982,7 +987,7 @@ object OptDialog: TOptDialog
       object OutputSingle: TComboBox
         Left = 248
         Top = 94
-        Width = 75
+        Width = 92
         Height = 21
         Style = csDropDownList
         ItemIndex = 0
@@ -993,12 +998,38 @@ object OptDialog: TOptDialog
           'ON')
       end
       object MaxSolStd: TEdit
-        Left = 325
+        Left = 342
         Top = 94
-        Width = 75
+        Width = 58
         Height = 21
         TabOrder = 16
         Text = '0'
+      end
+      object OutputAll: TComboBox
+        Left = 351
+        Top = 160
+        Width = 49
+        Height = 21
+        Style = csDropDownList
+        ItemIndex = 0
+        TabOrder = 17
+        Text = 'OFF'
+        Items.Strings = (
+          'OFF'
+          'ON')
+      end
+      object OutputVel: TComboBox
+        Left = 300
+        Top = 160
+        Width = 49
+        Height = 21
+        Style = csDropDownList
+        ItemIndex = 0
+        TabOrder = 18
+        Text = 'OFF'
+        Items.Strings = (
+          'OFF'
+          'ON')
       end
     end
     object TabSheet4: TTabSheet
@@ -1084,7 +1115,7 @@ object OptDialog: TOptDialog
           Width = 148
           Height = 21
           TabOrder = 4
-          Text = '0.100'
+          Text = '1.00'
         end
         object MeasErrR2: TEdit
           Left = 321
@@ -1183,7 +1214,6 @@ object OptDialog: TOptDialog
     object TabSheet5: TTabSheet
       Caption = '&Positions'
       ImageIndex = 4
-      ExplicitHeight = 234
       object Label4: TLabel
         Left = 12
         Top = 12
@@ -1820,7 +1850,6 @@ object OptDialog: TOptDialog
     object TabSheet6: TTabSheet
       Caption = '&Misc'
       ImageIndex = 6
-      ExplicitHeight = 234
       object Label19: TLabel
         Left = 184
         Top = 136

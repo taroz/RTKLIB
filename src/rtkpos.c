@@ -341,7 +341,7 @@ static void outsolstat(rtk_t *rtk)
     
     fputs(buff,fp_stat);
     
-    if (rtk->sol.stat==SOLQ_NONE||statlevel<=1) return;
+    if (rtk->sol.stat<=SOLQ_NONE||statlevel<=1) return;
     
     tow=time2gpst(rtk->sol.time,&week);
     nfreq=rtk->opt.mode>=PMODE_DGPS?nf:1;
@@ -1768,7 +1768,7 @@ static int relpos(rtk_t *rtk, const obsd_t *obs, int nu, int nr,
     
     if (stat!=SOLQ_NONE) rtk->sol.stat=stat;
     
-    return stat!=SOLQ_NONE;
+    return stat>SOLQ_NONE;
 }
 /* initialize rtk control ------------------------------------------------------
 * initialize rtk control struct
@@ -1939,14 +1939,16 @@ extern int rtkpos(rtk_t *rtk, const obsd_t *obs, int n, const nav_t *nav)
         }
         rtk->sol.age=(float)timediff(rtk->sol.time,solb.time);
         
-        if (fabs(rtk->sol.age)>TTOL_MOVEB) {
-            errmsg(rtk,"time sync error for moving-base (age=%.1f)\n",rtk->sol.age);
-            return 0;
-        }
+        /* disable time sync check for moving-base */
+        //if (fabs(rtk->sol.age)>TTOL_MOVEB) {
+        //    errmsg(rtk,"time sync error for moving-base (age=%.1f)\n",rtk->sol.age);
+        //    return 0;
+        //}
         for (i=0;i<6;i++) rtk->rb[i]=solb.rr[i];
         
+        /* disable time sync of base station for moving-base */
         /* time-synchronized position of base station */
-        for (i=0;i<3;i++) rtk->rb[i]+=rtk->rb[i+3]*rtk->sol.age;
+        //for (i=0;i<3;i++) rtk->rb[i]+=rtk->rb[i+3]*rtk->sol.age;
     }
     else {
         rtk->sol.age=(float)timediff(obs[0].time,obs[nu].time);

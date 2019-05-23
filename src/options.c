@@ -81,6 +81,7 @@ EXPORT opt_t sysopts[]={
     {"pos1-posopt4",    3,  (void *)&prcopt_.posopt[3],  SWTOPT },
     {"pos1-posopt5",    3,  (void *)&prcopt_.posopt[4],  SWTOPT },
     {"pos1-posopt6",    3,  (void *)&prcopt_.posopt[5],  SWTOPT },
+    {"pos1-posopt7",    3,  (void *)&prcopt_.posopt[6],  SWTOPT },
     {"pos1-exclsats",   2,  (void *)exsats_,             "prn ..."},
     {"pos1-navsys",     0,  (void *)&prcopt_.navsys,     NAVOPT },
     
@@ -111,6 +112,7 @@ EXPORT opt_t sysopts[]={
     {"out-outhead",     3,  (void *)&solopt_.outhead,    SWTOPT },
     {"out-outopt",      3,  (void *)&solopt_.outopt,     SWTOPT },
     {"out-outvel",      3,  (void *)&solopt_.outvel,     SWTOPT },
+    {"out-outall",      3,  (void *)&solopt_.outall,     SWTOPT },
     {"out-timesys",     3,  (void *)&solopt_.times,      TSYOPT },
     {"out-timeform",    3,  (void *)&solopt_.timef,      TFTOPT },
     {"out-timendec",    0,  (void *)&solopt_.timeu,      ""     },

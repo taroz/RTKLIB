@@ -209,7 +209,7 @@ const prcopt_t prcopt_default={ /* defaults processing options */
 };
 const solopt_t solopt_default={ /* defaults solution output options */
     SOLF_LLH,TIMES_GPST,1,3,    /* posf,times,timef,timeu */
-    0,1,0,0,0,0,0,              /* degf,outhead,outopt,outvel,datum,height,geoid */
+    0,1,0,0,0,0,0,0,            /* degf,outhead,outopt,outvel,outall,datum,height,geoid */
     0,0,0,                      /* solstatic,sstat,trace */
     {0.0,0.0},                  /* nmeaintv */
     " ",""                      /* separator/program name */

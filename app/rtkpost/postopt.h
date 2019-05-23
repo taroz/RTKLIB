@@ -225,6 +225,9 @@ __published:
 	TCheckBox *NavSys7;
 	TComboBox *OutputSingle;
 	TEdit *MaxSolStd;
+	TCheckBox *PosOpt7;
+	TComboBox *OutputAll;
+	TComboBox *OutputVel;
 	void __fastcall BtnOkClick(TObject *Sender);
 	void __fastcall RovAntPcvClick(TObject *Sender);
 	void __fastcall FormShow(TObject *Sender);
@@ -276,6 +279,7 @@ __published:
 	void __fastcall BtnExtOptClick(TObject *Sender);
 	void __fastcall BtnMaskClick(TObject *Sender);
 	void __fastcall NavSys6Click(TObject *Sender);
+
 private:
 	snrmask_t SnrMask;
 	int RovPosTypeP,RefPosTypeP;

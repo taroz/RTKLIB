@@ -376,6 +376,7 @@ void __fastcall TOptDialog::GetOpt(void)
 	PosOpt4	     ->Checked		=MainForm->PosOpt[3];
 	PosOpt5	     ->Checked		=MainForm->PosOpt[4];
 	PosOpt6	     ->Checked		=MainForm->PosOpt[5];
+	PosOpt7	     ->Checked		=MainForm->PosOpt[6];
 //	MapFunc	     ->ItemIndex	=MainForm->MapFunc;
 	
 	AmbRes		 ->ItemIndex	=MainForm->AmbRes;
@@ -407,6 +408,8 @@ void __fastcall TOptDialog::GetOpt(void)
 	OutputHead	 ->ItemIndex	=MainForm->OutputHead;
 	OutputOpt	 ->ItemIndex	=MainForm->OutputOpt;
 	OutputSingle ->ItemIndex	=MainForm->OutputSingle;
+	OutputAll    ->ItemIndex	=MainForm->OutputAll;
+	OutputVel    ->ItemIndex	=MainForm->OutputVel;
 	MaxSolStd	 ->Text			=s.sprintf("%.2g",MainForm->MaxSolStd);
 	OutputDatum  ->ItemIndex	=MainForm->OutputDatum;
 	OutputHeight ->ItemIndex	=MainForm->OutputHeight;
@@ -498,6 +501,7 @@ void __fastcall TOptDialog::SetOpt(void)
 	MainForm->PosOpt[3]	  	=PosOpt4	->Checked;
 	MainForm->PosOpt[4]	  	=PosOpt5	->Checked;
 	MainForm->PosOpt[5]	  	=PosOpt6	->Checked;
+	MainForm->PosOpt[6]	  	=PosOpt7	->Checked;
 //	MainForm->MapFunc		=MapFunc	->ItemIndex;
 	
 	MainForm->AmbRes	  	=AmbRes		->ItemIndex;
@@ -530,6 +534,8 @@ void __fastcall TOptDialog::SetOpt(void)
 	MainForm->OutputHead  	=OutputHead ->ItemIndex;
 	MainForm->OutputOpt   	=OutputOpt  ->ItemIndex;
 	MainForm->OutputSingle 	=OutputSingle->ItemIndex;
+	MainForm->OutputAll 	=OutputAll->ItemIndex;
+	MainForm->OutputVel 	=OutputVel->ItemIndex;
 	MainForm->MaxSolStd 	=str2dbl(MaxSolStd->Text);
 	MainForm->OutputDatum 	=OutputDatum->ItemIndex;
 	MainForm->OutputHeight	=OutputHeight->ItemIndex;
@@ -634,6 +640,7 @@ void __fastcall TOptDialog::LoadOpt(AnsiString file)
 	PosOpt4	     ->Checked		=prcopt.posopt[3];
 	PosOpt5	     ->Checked		=prcopt.posopt[4];
 	PosOpt6	     ->Checked		=prcopt.posopt[5];
+	PosOpt7	     ->Checked		=prcopt.posopt[6];
 //	MapFunc	     ->ItemIndex	=prcopt.mapfunc;
 	
 	AmbRes		 ->ItemIndex	=prcopt.modear;
@@ -665,6 +672,8 @@ void __fastcall TOptDialog::LoadOpt(AnsiString file)
 	OutputHead	 ->ItemIndex	=solopt.outhead;
 	OutputOpt	 ->ItemIndex	=solopt.outopt;
 	OutputSingle ->ItemIndex    =prcopt.outsingle;
+	OutputAll    ->ItemIndex    =solopt.outall;
+	OutputVel    ->ItemIndex    =solopt.outvel;
 	MaxSolStd	 ->Text		    =s.sprintf("%.2g",solopt.maxsolstd);
 	OutputDatum  ->ItemIndex	=solopt.datum;
 	OutputHeight ->ItemIndex	=solopt.height;
@@ -779,6 +788,7 @@ void __fastcall TOptDialog::SaveOpt(AnsiString file)
 	prcopt.posopt[3]=PosOpt4	->Checked;
 	prcopt.posopt[4]=PosOpt5	->Checked;
 	prcopt.posopt[5]=PosOpt6	->Checked;
+	prcopt.posopt[6]=PosOpt7	->Checked;
 //	prcopt.mapfunc	=MapFunc	->ItemIndex;
 	
 	prcopt.modear	=AmbRes		->ItemIndex;
@@ -811,6 +821,8 @@ void __fastcall TOptDialog::SaveOpt(AnsiString file)
 	solopt.outhead	=OutputHead	 ->ItemIndex;
 	solopt.outopt	=OutputOpt	 ->ItemIndex;
 	prcopt.outsingle=OutputSingle->ItemIndex;
+	solopt.outall   =OutputAll->ItemIndex;
+	solopt.outvel   =OutputVel->ItemIndex;
 	solopt.maxsolstd=str2dbl(MaxSolStd->Text);
 	solopt.datum	=OutputDatum ->ItemIndex;
 	solopt.height	=OutputHeight->ItemIndex;
@@ -1066,5 +1078,4 @@ void __fastcall TOptDialog::NavSys6Click(TObject *Sender)
 	UpdateEnable();
 }
 //---------------------------------------------------------------------------
-
 

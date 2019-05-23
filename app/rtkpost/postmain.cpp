@@ -867,6 +867,7 @@ int __fastcall TMainForm::GetOption(prcopt_t &prcopt, solopt_t &solopt,
     prcopt.posopt[3]=PosOpt[3];
     prcopt.posopt[4]=PosOpt[4];
     prcopt.posopt[5]=PosOpt[5];
+	prcopt.posopt[6]=PosOpt[6];
     prcopt.dynamics =DynamicModel;
     prcopt.tidecorr =TideCorr;
     prcopt.armaxiter=ARIter;
@@ -878,7 +879,7 @@ int __fastcall TMainForm::GetOption(prcopt_t &prcopt, solopt_t &solopt,
     prcopt.err[1]   =MeasErr2;
     prcopt.err[2]   =MeasErr3;
     prcopt.err[3]   =MeasErr4;
-    prcopt.err[4]   =MeasErr5;
+	prcopt.err[4]   =MeasErr5;
     prcopt.prn[0]   =PrNoise1;
     prcopt.prn[1]   =PrNoise2;
     prcopt.prn[2]   =PrNoise3;
@@ -893,8 +894,8 @@ int __fastcall TMainForm::GetOption(prcopt_t &prcopt, solopt_t &solopt,
     prcopt.thresslip=SlipThres;
     prcopt.maxtdiff =MaxAgeDiff;
     prcopt.maxgdop  =RejectGdop;
-    prcopt.maxinno  =RejectThres;
-    prcopt.outsingle=OutputSingle;
+	prcopt.maxinno  =RejectThres;
+	prcopt.outsingle=OutputSingle;
     if (BaseLineConst) {
         prcopt.baseline[0]=BaseLine[0];
         prcopt.baseline[1]=BaseLine[1];
@@ -953,8 +954,10 @@ int __fastcall TMainForm::GetOption(prcopt_t &prcopt, solopt_t &solopt,
     solopt.timeu    =TimeDecimal<=0?0:TimeDecimal;
     solopt.degf     =LatLonFormat;
     solopt.outhead  =OutputHead;
-    solopt.outopt   =OutputOpt;
-    solopt.maxsolstd=MaxSolStd;
+	solopt.outopt   =OutputOpt;
+	solopt.outvel   =OutputVel;
+	solopt.outall   =OutputAll;
+	solopt.maxsolstd=MaxSolStd;
     solopt.datum    =OutputDatum;
     solopt.height   =OutputHeight;
     solopt.geoid    =OutputGeoid;
@@ -1221,12 +1224,13 @@ void __fastcall TMainForm::LoadOpt(void)
     SatEphem           =ini->ReadInteger("opt","satephem",       0);
     ExSats             =ini->ReadString ("opt","exsats",        "");
     NavSys             =ini->ReadInteger("opt","navsys",   SYS_GPS);
-    PosOpt[0]          =ini->ReadInteger("opt","posopt1",        0);
+	PosOpt[0]          =ini->ReadInteger("opt","posopt1",        0);
     PosOpt[1]          =ini->ReadInteger("opt","posopt2",        0);
     PosOpt[2]          =ini->ReadInteger("opt","posopt3",        0);
     PosOpt[3]          =ini->ReadInteger("opt","posopt4",        0);
-    PosOpt[4]          =ini->ReadInteger("opt","posopt5",        0);
-    PosOpt[5]          =ini->ReadInteger("opt","posopt6",        0);
+	PosOpt[4]          =ini->ReadInteger("opt","posopt5",        0);
+	PosOpt[5]          =ini->ReadInteger("opt","posopt6",        0);
+	PosOpt[6]          =ini->ReadInteger("opt","posopt7",        0);
     MapFunc            =ini->ReadInteger("opt","mapfunc",        0);
     
     AmbRes             =ini->ReadInteger("opt","ambres",         1);
@@ -1257,8 +1261,10 @@ void __fastcall TMainForm::LoadOpt(void)
     LatLonFormat       =ini->ReadInteger("opt","latlonformat",   0);
     FieldSep           =ini->ReadString ("opt","fieldsep",      "");
     OutputHead         =ini->ReadInteger("opt","outputhead",     1);
-    OutputOpt          =ini->ReadInteger("opt","outputopt",      1);
-    OutputSingle       =ini->ReadInteger("opt","outputsingle",   0);
+	OutputOpt          =ini->ReadInteger("opt","outputopt",      1);
+	OutputSingle       =ini->ReadInteger("opt","outputsingle",   0);
+	OutputAll          =ini->ReadInteger("opt","outputall",      0);
+	OutputVel          =ini->ReadInteger("opt","outputvel",      0);
     MaxSolStd          =ini->ReadFloat  ("opt","maxsolstd",    0.0);
     OutputDatum        =ini->ReadInteger("opt","outputdatum",    0);
     OutputHeight       =ini->ReadInteger("opt","outputheight",   0);
@@ -1272,7 +1278,7 @@ void __fastcall TMainForm::LoadOpt(void)
     MeasErr2           =ini->ReadFloat  ("opt","measerr2",   0.003);
     MeasErr3           =ini->ReadFloat  ("opt","measerr3",   0.003);
     MeasErr4           =ini->ReadFloat  ("opt","measerr4",   0.000);
-    MeasErr5           =ini->ReadFloat  ("opt","measerr5",  10.000);
+    MeasErr5           =ini->ReadFloat  ("opt","measerr5",   1.000);
     SatClkStab         =ini->ReadFloat  ("opt","satclkstab", 5E-12);
     PrNoise1           =ini->ReadFloat  ("opt","prnoise1",    1E-4);
     PrNoise2           =ini->ReadFloat  ("opt","prnoise2",    1E-3);
@@ -1436,8 +1442,9 @@ void __fastcall TMainForm::SaveOpt(void)
     ini->WriteInteger("opt","posopt2",     PosOpt[1]   );
     ini->WriteInteger("opt","posopt3",     PosOpt[2]   );
     ini->WriteInteger("opt","posopt4",     PosOpt[3]   );
-    ini->WriteInteger("opt","posopt5",     PosOpt[4]   );
-    ini->WriteInteger("opt","posopt6",     PosOpt[5]   );
+	ini->WriteInteger("opt","posopt5",     PosOpt[4]   );
+	ini->WriteInteger("opt","posopt6",     PosOpt[5]   );
+	ini->WriteInteger("opt","posopt7",     PosOpt[6]   );
     ini->WriteInteger("opt","mapfunc",     MapFunc     );
     
     ini->WriteInteger("opt","ambres",      AmbRes      );
@@ -1468,15 +1475,17 @@ void __fastcall TMainForm::SaveOpt(void)
     ini->WriteInteger("opt","latlonformat",LatLonFormat);
     ini->WriteString ("opt","fieldsep",    FieldSep    );
     ini->WriteInteger("opt","outputhead",  OutputHead  );
-    ini->WriteInteger("opt","outputopt",   OutputOpt   );
-    ini->WriteInteger("opt","outputsingle",OutputSingle);
-    ini->WriteFloat  ("opt","maxsolstd",   MaxSolStd   );
+	ini->WriteInteger("opt","outputopt",   OutputOpt   );
+	ini->WriteInteger("opt","outputsingle",OutputSingle);
+	ini->WriteInteger("opt","outputvel",   OutputVel   );
+	ini->WriteInteger("opt","outputall",   OutputAll   );
+	ini->WriteFloat  ("opt","maxsolstd",   MaxSolStd   );
     ini->WriteInteger("opt","outputdatum", OutputDatum );
     ini->WriteInteger("opt","outputheight",OutputHeight);
     ini->WriteInteger("opt","outputgeoid", OutputGeoid );
     ini->WriteInteger("opt","solstatic",   SolStatic   );
     ini->WriteInteger("opt","debugtrace",  DebugTrace  );
-    ini->WriteInteger("opt","debugstatus", DebugStatus );
+	ini->WriteInteger("opt","debugstatus", DebugStatus );
     
     ini->WriteFloat  ("opt","measeratio1", MeasErrR1   );
     ini->WriteFloat  ("opt","measeratio2", MeasErrR2   );

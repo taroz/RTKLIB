@@ -393,7 +393,7 @@ static void procpos(FILE *fp, const prcopt_t *popt, const solopt_t *sopt,
             for (i=0;i<n;i++) obs[i].L[1]=obs[i].P[1]=0.0;
         }
 #endif
-        if (!rtkpos(&rtk,obs,n,&navs)) continue;
+        if (!rtkpos(&rtk,obs,n,&navs)&&!sopt->outall) continue;
         
         if (mode==0) { /* forward/backward */
             if (!solstatic) {

@@ -355,6 +355,7 @@ extern "C" {
 #define SOLF_STAT   4                   /* solution format: solution status */
 #define SOLF_GSIF   5                   /* solution format: GSI F1/F2 */
 
+#define SOLQ_INVALID -1                 /* solution status: invalid solution */
 #define SOLQ_NONE   0                   /* solution status: no solution */
 #define SOLQ_FIX    1                   /* solution status: fix */
 #define SOLQ_FLOAT  2                   /* solution status: float */
@@ -922,8 +923,10 @@ typedef struct {        /* solution type */
     float  qv[6];       /* velocity variance/covariance (m^2/s^2) */
     double dtr[6];      /* receiver clock bias to time systems (s) */
     unsigned char type; /* type (0:xyz-ecef,1:enu-baseline) */
-    unsigned char stat; /* solution status (SOLQ_???) */
+    char stat;          /* solution status (SOLQ_???) */
     unsigned char ns;   /* number of valid satellites */
+    char statv;         /* velocity solution status (SOLQ_???) */
+    unsigned char nsv;  /* number of valid satellites for velocity */
     float age;          /* age of differential (s) */
     float ratio;        /* AR ratio factor for valiation */
     float thres;        /* AR ratio threshold for valiation */
@@ -1086,7 +1089,7 @@ typedef struct {        /* processing options type */
     int  initrst;       /* initialize by restart */
     int  outsingle;     /* output single by dgps/float/fix/ppp outage */
     char rnxopt[2][256]; /* rinex options {rover,base} */
-    int  posopt[6];     /* positioning options */
+    int  posopt[7];     /* positioning options */
     int  syncsol;       /* solution sync mode (0:off,1:on) */
     double odisp[2][6*11]; /* ocean tide loading parameters {rov,base} */
     exterr_t exterr;    /* extended receiver error model */
@@ -1102,7 +1105,8 @@ typedef struct {        /* solution options type */
     int degf;           /* latitude/longitude format (0:ddd.ddd,1:ddd mm ss) */
     int outhead;        /* output header (0:no,1:yes) */
     int outopt;         /* output processing options (0:no,1:yes) */
-    int outvel;         /* output velocity options (0:no,1:yes) */
+    int outvel;         /* output velocity options (0:no,1:yes) */    
+    int outall;         /* output all solutions even if SOLQ_NONE options (0:no,1:yes) */
     int datum;          /* datum (0:WGS84,1:Tokyo) */
     int height;         /* height (0:ellipsoidal,1:geodetic) */
     int geoid;          /* geoid model (0:EGM96,1:JGD2000) */

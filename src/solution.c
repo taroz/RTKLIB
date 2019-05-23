@@ -1120,8 +1120,8 @@ static int outecef(unsigned char *buff, const char *s, const sol_t *sol,
                sep,sol->age,sep,sol->ratio);
     
     if (opt->outvel) { /* output velocity */
-        p+=sprintf(p,"%s%10.5f%s%10.5f%s%10.5f%s%9.5f%s%8.5f%s%8.5f%s%8.5f%s%8.5f%s%8.5f",
-                   sep,sol->rr[3],sep,sol->rr[4],sep,sol->rr[5],sep,
+        p+=sprintf(p,"%s%10.5f%s%10.5f%s%10.5f%s%3d%s%3d%s%9.5f%s%8.5f%s%8.5f%s%8.5f%s%8.5f%s%8.5f",
+                   sep,sol->rr[3],sep,sol->rr[4],sep,sol->rr[5],sep,sol->statv,sep,sol->nsv,sep,
                    SQRT(sol->qv[0]),sep,SQRT(sol->qv[1]),sep,SQRT(sol->qv[2]),
                    sep,sqvar(sol->qv[3]),sep,sqvar(sol->qv[4]),sep,
                    sqvar(sol->qv[5]));
@@ -1164,8 +1164,8 @@ static int outpos(unsigned char *buff, const char *s, const sol_t *sol,
         soltocov_vel(sol,P);
         ecef2enu(pos,sol->rr+3,vel);
         covenu(pos,P,Q);
-        p+=sprintf(p,"%s%10.5f%s%10.5f%s%10.5f%s%9.5f%s%8.5f%s%8.5f%s%8.5f%s%8.5f%s%8.5f",
-                   sep,vel[1],sep,vel[0],sep,vel[2],sep,SQRT(Q[4]),sep,
+        p+=sprintf(p,"%s%10.5f%s%10.5f%s%10.5f%s%3d%s%3d%s%9.5f%s%8.5f%s%8.5f%s%8.5f%s%8.5f%s%8.5f",
+                   sep,vel[1],sep,vel[0],sep,vel[2],sep,sol->statv,sep,sol->nsv,sep,SQRT(Q[4]),sep,
                    SQRT(Q[0]),sep,SQRT(Q[8]),sep,sqvar(Q[1]),sep,sqvar(Q[2]),
                    sep,sqvar(Q[5]));
     }
@@ -1553,8 +1553,8 @@ extern int outsolheads(unsigned char *buff, const solopt_t *opt)
                        "sdne(m)",sep,"sdeu(m)",sep,"sdun(m)",sep,"age(s)",sep,"ratio");
         }
         if (opt->outvel) {
-            p+=sprintf(p,"%s%10s%s%10s%s%10s%s%9s%s%8s%s%8s%s%8s%s%8s%s%8s",
-                       sep,"vn(m/s)",sep,"ve(m/s)",sep,"vu(m/s)",sep,"sdvn",sep,
+            p+=sprintf(p,"%s%10s%s%10s%s%10s%s%3s%s%3s%s%9s%s%8s%s%8s%s%8s%s%8s%s%8s",
+                       sep,"vn(m/s)",sep,"ve(m/s)",sep,"vu(m/s)",sep,"Q",sep,"ns",sep,"sdvn",sep,
                        "sdve",sep,"sdvu",sep,"sdvne",sep,"sdveu",sep,"sdvun");
         }
     }
@@ -1565,8 +1565,8 @@ extern int outsolheads(unsigned char *buff, const solopt_t *opt)
                    "sdyz(m)",sep,"sdzx(m)",sep,"age(s)",sep,"ratio");
         
         if (opt->outvel) {
-            p+=sprintf(p,"%s%10s%s%10s%s%10s%s%9s%s%8s%s%8s%s%8s%s%8s%s%8s",
-                       sep,"vx(m/s)",sep,"vy(m/s)",sep,"vz(m/s)",sep,"sdvx",sep,
+            p+=sprintf(p,"%s%10s%s%10s%s%10s%s%3s%s%3s%s%9s%s%8s%s%8s%s%8s%s%8s%s%8s",
+                       sep,"vx(m/s)",sep,"vy(m/s)",sep,"vz(m/s)",sep,"Q",sep,"ns",sep,"sdvx",sep,
                        "sdvy",sep,"sdvz",sep,"sdvxy",sep,"sdvyz",sep,"sdvzx");
         }
     }
@@ -1608,14 +1608,14 @@ extern int outsols(unsigned char *buff, const sol_t *sol, const double *rb,
     trace(3,"outsols :\n");
     
     /* suppress output if std is over opt->maxsolstd */
-    if (opt->maxsolstd>0.0&&sol_std(sol)>opt->maxsolstd) {
+    if (!opt->outall&&opt->maxsolstd>0.0&&sol_std(sol)>opt->maxsolstd) {
         return 0;
     }
     if (opt->posf==SOLF_NMEA) {
         if (opt->nmeaintv[0]<0.0) return 0;
         if (!screent(sol->time,ts,ts,opt->nmeaintv[0])) return 0;
     }
-    if (sol->stat<=SOLQ_NONE||(opt->posf==SOLF_ENU&&norm(rb,3)<=0.0)) {
+    if ((!opt->outall&&sol->stat<=SOLQ_NONE)||(opt->posf==SOLF_ENU&&norm(rb,3)<=0.0)) {
         return 0;
     }
     timeu=opt->timeu<0?0:(opt->timeu>20?20:opt->timeu);
