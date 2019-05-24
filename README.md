@@ -5,7 +5,8 @@
 - Output velocity even when position cannot be computed
 
 # Setting1
-![opt_setting1](https://user-images.githubusercontent.com/7933764/58242274-7812cb80-7d89-11e9-8879-9c2363810951.png)
+<img src="https://user-images.githubusercontent.com/7933764/58242274-7812cb80-7d89-11e9-8879-9c2363810951.png" width="600px">
+
 ## Inter System Biases of Doppler Frequency
 - **DISB**: This option estimates GPS-GLO, GPS-BDS, and GPS-GAL inter system biases of Doppler frequency (**pos1-posopt6 = ON**)
 
@@ -14,7 +15,8 @@
 - Note: Additional observations are needed to estimate the bias. The availability of velocity will be decreased in urban environments.
 
 # Output
-![opt_output](https://user-images.githubusercontent.com/7933764/58243490-b4dfc200-7d8b-11e9-8dca-a8b1596e5723.png)
+<img src="https://user-images.githubusercontent.com/7933764/58243490-b4dfc200-7d8b-11e9-8dca-a8b1596e5723.png" width="600px">
+
 ## Output Velocity
 - **Out Vel**: Output velocity in .pos file (**out-outvel = ON**)
 - Format: ```vn(m/s) ve(m/s) vu(m/s) Q ns sdvn sdve sdvu sdvne sdveu sdvun```
@@ -27,7 +29,8 @@
 ![outall](https://user-images.githubusercontent.com/7933764/58296514-e8176500-7e0e-11e9-8c7d-975bef44c0e3.png)
 
 # Statistics
-![opt_statistics](https://user-images.githubusercontent.com/7933764/58295565-e3e94880-7e0a-11e9-8f6c-eb4a2b4af570.png)
+<img src="https://user-images.githubusercontent.com/7933764/58295565-e3e94880-7e0a-11e9-8f6c-eb4a2b4af570.png" width="600px">
+
 ## Doppler frequency (Hz)
 - Standard deviation of Doppler frequency error (Hz) : SD_Doppler
 - Current error model is as follows: ```sd = SD_Doppler/sin(elevation)```
