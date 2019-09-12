@@ -199,7 +199,7 @@ static int rescode(int iter, const obsd_t *obs, int n, const double *rs,
                    const double *dts, const double *vare, const int *svh,
                    const nav_t *nav, const double *x, const prcopt_t *opt,
                    double *v, double *H, double *var, double *azel, int *vsat,
-                   double *resp, int *ns)
+                   double *resp, double *sclk, double *ion, double *trop, double *rgeo, int *ns)
 {
 	double r,dion,dtrp,vmeas,vion,vtrp,rr[3],pos[3],dtr,e[3],P,lam_L1;
 	int i,j,nv=0,sys,mask[4]={0};
@@ -212,7 +212,7 @@ static int rescode(int iter, const obsd_t *obs, int n, const double *rs,
     ecef2pos(rr,pos);
     
     for (i=*ns=0;i<n&&i<MAXOBS;i++) {
-		vsat[i]=0; azel[i*2]=azel[1+i*2]=resp[i]=0.0;
+		vsat[i]=0; azel[i*2]=azel[1+i*2]=resp[i]=sclk[i]=ion[i]=trop[i]=0.0;
 
 		if (!(sys=satsys(obs[i].sat,NULL))) continue;
         
@@ -259,6 +259,10 @@ static int rescode(int iter, const obsd_t *obs, int n, const double *rs,
 		else mask[0]=1;
 
 		vsat[i]=1; resp[i]=v[nv]; (*ns)++;
+        sclk[i]=-CLIGHT*dts[i*2];
+		ion[i]=dion;
+		trop[i]=dtrp;
+		rgeo[i]=r;
 
 		/* error variance */
 		var[nv++]=varerr(opt,azel[1+i*2],sys)+vare[i]+vmeas+vion+vtrp;
@@ -324,7 +328,7 @@ static int valsolv(const double *v, int nv, int nx, char *msg)
 static int estpos(const obsd_t *obs, int n, const double *rs, const double *dts,
                   const double *vare, const int *svh, const nav_t *nav,
                   const prcopt_t *opt, sol_t *sol, double *azel, int *vsat,
-                  double *resp, char *msg)
+                  double *resp, double *sclk, double *ion, double *trop,double *rgeo, char *msg)
 {
 	double x[NX]={0},dx[NX],Q[NX*NX],*v,*H,*var,sig;
     int i,j,k,info,stat,nv,ns;
@@ -338,8 +342,7 @@ static int estpos(const obsd_t *obs, int n, const double *rs, const double *dts,
     for (i=0;i<MAXITR;i++) {
         
         /* pseudorange residuals */
-        nv=rescode(i,obs,n,rs,dts,vare,svh,nav,x,opt,v,H,var,azel,vsat,resp,
-                   &ns);
+        nv=rescode(i,obs,n,rs,dts,vare,svh,nav,x,opt,v,H,var,azel,vsat,resp,sclk,ion,trop,rgeo,&ns);
         
 		if (nv<=NX) {
             sprintf(msg,"lack of valid sats nv=%d ns=%d",nv,ns);
@@ -399,7 +402,7 @@ static int raim_fde(const obsd_t *obs, int n, const double *rs,
     obsd_t *obs_e;
     sol_t sol_e={{0}};
     char tstr[32],name[16],msg_e[128];
-    double *rs_e,*dts_e,*vare_e,*azel_e,*resp_e,rms_e,rms=100.0;
+    double *rs_e,*dts_e,*vare_e,*azel_e,*resp_e,*sclk_e,*ion_e,*trop_e,*rgeo_e,rms_e,rms=100.0;
     int i,j,k,nvsat,stat=0,*svh_e,*vsat_e,sat=0;
     
     trace(3,"raim_fde: %s n=%2d\n",time_str(obs[0].time,0),n);
@@ -407,6 +410,7 @@ static int raim_fde(const obsd_t *obs, int n, const double *rs,
     if (!(obs_e=(obsd_t *)malloc(sizeof(obsd_t)*n))) return 0;
     rs_e = mat(6,n); dts_e = mat(2,n); vare_e=mat(1,n); azel_e=zeros(2,n);
     svh_e=imat(1,n); vsat_e=imat(1,n); resp_e=mat(1,n); 
+	sclk_e=mat(1,n); ion_e=mat(1,n); trop_e=mat(1,n); rgeo_e=mat(1,n);
     
     for (i=0;i<n;i++) {
         
@@ -421,7 +425,7 @@ static int raim_fde(const obsd_t *obs, int n, const double *rs,
         }
         /* estimate receiver position without a satellite */
         if (!estpos(obs_e,n-1,rs_e,dts_e,vare_e,svh_e,nav,opt,&sol_e,azel_e,
-                    vsat_e,resp_e,msg_e)) {
+                    vsat_e,resp_e,sclk_e,ion_e,trop_e,rgeo_e,msg_e)) {
             trace(3,"raim_fde: exsat=%2d (%s)\n",obs[i].sat,msg);
             continue;
         }
@@ -462,6 +466,7 @@ static int raim_fde(const obsd_t *obs, int n, const double *rs,
     free(obs_e);
     free(rs_e ); free(dts_e ); free(vare_e); free(azel_e);
     free(svh_e); free(vsat_e); free(resp_e);
+    free(sclk_e); free(ion_e); free(trop_e); free(rgeo_e);
     return stat;
 }
 /* doppler residuals ---------------------------------------------------------*/
@@ -575,7 +580,7 @@ static int estvel(const obsd_t *obs, int n, const double *rs, const double *dts,
             sol->nsv=(unsigned char)nsv;
             
             /* validate solution */
-			if (valsolv(v,nv,nx,msg)) {
+			if (stat=valsolv(v,nv,nx,msg)) {
 				sol->statv=SOLQ_SINGLE;
 			} else {
 				sol->statv=SOLQ_INVALID;
@@ -612,7 +617,7 @@ extern int pntpos(const obsd_t *obs, int n, const nav_t *nav,
                   char *msg)
 {
     prcopt_t opt_=*opt;
-    double *rs,*dts,*var,*azel_,*resp,*resv;
+    double *rs,*dts,*var,*azel_,*resp,*resv,*sclk,*ion,*trop,*rgeo;
     int i,stat,vsat[MAXOBS]={0},svh[MAXOBS];
     
     sol->stat=SOLQ_NONE;
@@ -625,7 +630,8 @@ extern int pntpos(const obsd_t *obs, int n, const nav_t *nav,
     sol->time=obs[0].time; msg[0]='\0';
     
     rs=mat(6,n); dts=mat(2,n); var=mat(1,n); azel_=zeros(2,n); resp=mat(1,n);
-    resv=mat(1,n);
+    resv=mat(1,n); sclk=mat(1,n); ion=mat(1,n); trop=mat(1,n); rgeo=mat(1,n);
+
     
     if (opt_.mode!=PMODE_SINGLE) { /* for precise positioning */
 #if 0
@@ -638,7 +644,7 @@ extern int pntpos(const obsd_t *obs, int n, const nav_t *nav,
     satposs(sol->time,obs,n,nav,opt_.sateph,rs,dts,var,svh);
     
     /* estimate receiver position with pseudorange */
-    stat=estpos(obs,n,rs,dts,var,svh,nav,&opt_,sol,azel_,vsat,resp,msg);
+    stat=estpos(obs,n,rs,dts,var,svh,nav,&opt_,sol,azel_,vsat,resp,sclk,ion,trop,rgeo,msg);
     
     /* raim fde */
     if (!stat&&n>=6&&opt->posopt[4]) {
@@ -656,6 +662,8 @@ extern int pntpos(const obsd_t *obs, int n, const nav_t *nav,
             ssat[i].azel[0]=ssat[i].azel[1]=0.0;
             ssat[i].resp[0]=ssat[i].resc[0]=0.0;
             ssat[i].snr[0]=0;
+			ssat[i].sclk[0]=ssat[i].ion[0]=ssat[i].trop[0]=ssat[i].rgeo[0]=0.0;
+			ssat[i].xsat[0]=ssat[i].ysat[0]=ssat[i].zsat[0]=0.0;
         }
         for (i=0;i<n;i++) {
             ssat[obs[i].sat-1].azel[0]=azel_[  i*2];
@@ -664,8 +672,16 @@ extern int pntpos(const obsd_t *obs, int n, const nav_t *nav,
             if (!vsat[i]) continue;
             ssat[obs[i].sat-1].vs=1;
             ssat[obs[i].sat-1].resp[0]=resp[i];
+            ssat[obs[i].sat-1].sclk[0]=sclk[i];
+			ssat[obs[i].sat-1].ion[0]=ion[i];
+			ssat[obs[i].sat-1].trop[0]=trop[i];
+			ssat[obs[i].sat-1].rgeo[0]=rgeo[i];
+			ssat[obs[i].sat-1].xsat[0]=rs[0+i*6];
+			ssat[obs[i].sat-1].ysat[0]=rs[1+i*6];
+			ssat[obs[i].sat-1].zsat[0]=rs[2+i*6];
         }
     }
     free(rs); free(dts); free(var); free(azel_); free(resp); free(resv);
+    free(sclk); free(ion); free(trop); free(rgeo);
     return stat;
 }
